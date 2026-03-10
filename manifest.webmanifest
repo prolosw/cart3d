@@ -1,0 +1,27 @@
+{
+  "id": "./",
+  "name": "Mart Cart Run",
+  "short_name": "Cart Run",
+  "description": "A 3D arcade shopping run through a busy supermarket aisle.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "display_override": ["standalone", "minimal-ui"],
+  "orientation": "portrait",
+  "background_color": "#13202a",
+  "theme_color": "#13202a",
+  "icons": [
+    {
+      "src": "./assets/icon-mart-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "./assets/icon-mart-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

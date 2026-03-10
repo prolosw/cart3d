@@ -1,0 +1,226 @@
+{
+  "project": {
+    "title": "Number Monster Adventure",
+    "platform": ["android", "ios"],
+    "targetAge": "5-10",
+    "stageDurationSeconds": {
+      "min": 30,
+      "max": 60
+    }
+  },
+  "difficultyBands": [
+    {
+      "name": "number_recognition",
+      "playerLevelMin": 1,
+      "playerLevelMax": 10,
+      "mathTypes": ["match-number"],
+      "targetRange": [1, 10],
+      "buttonsShown": 4,
+      "answersRequired": 1
+    },
+    {
+      "name": "addition_intro",
+      "playerLevelMin": 11,
+      "playerLevelMax": 30,
+      "mathTypes": ["addition"],
+      "targetRange": [3, 20],
+      "buttonsShown": 5,
+      "answersRequired": 2
+    },
+    {
+      "name": "mixed_add_subtract",
+      "playerLevelMin": 31,
+      "playerLevelMax": 60,
+      "mathTypes": ["addition", "subtraction"],
+      "targetRange": [4, 25],
+      "buttonsShown": 5,
+      "answersRequired": 1
+    },
+    {
+      "name": "multiplication_intro",
+      "playerLevelMin": 61,
+      "playerLevelMax": 99,
+      "mathTypes": ["multiplication", "addition", "subtraction"],
+      "targetRange": [4, 36],
+      "buttonsShown": 6,
+      "answersRequired": 1
+    }
+  ],
+  "worlds": [
+    {
+      "id": 1,
+      "name": "Number Forest",
+      "theme": "Bright forest with flowers, leaves, and soft woodland monsters",
+      "mathFocus": ["match-number"],
+      "stageCount": 12,
+      "enemyLevelRange": [1, 10]
+    },
+    {
+      "id": 2,
+      "name": "Addition Cave",
+      "theme": "Glowing crystal caves with playful rock creatures",
+      "mathFocus": ["addition"],
+      "stageCount": 12,
+      "enemyLevelRange": [11, 25]
+    },
+    {
+      "id": 3,
+      "name": "Subtraction Desert",
+      "theme": "Sunny ruins and dunes filled with ancient puzzle monsters",
+      "mathFocus": ["addition", "subtraction"],
+      "stageCount": 12,
+      "enemyLevelRange": [26, 45]
+    },
+    {
+      "id": 4,
+      "name": "Multiplication Volcano",
+      "theme": "Warm lava caves and fire monsters with bouncing magma effects",
+      "mathFocus": ["multiplication"],
+      "stageCount": 12,
+      "enemyLevelRange": [46, 70]
+    },
+    {
+      "id": 5,
+      "name": "Space Math Galaxy",
+      "theme": "Colorful stars, planets, and cosmic monsters",
+      "mathFocus": ["addition", "subtraction", "multiplication"],
+      "stageCount": 15,
+      "enemyLevelRange": [71, 99]
+    }
+  ],
+  "rewardTiers": {
+    "standardStage": {
+      "coins": [10, 25],
+      "playerMonsterExp": [5, 10],
+      "eggDropChance": {
+        "common": 0.3,
+        "rare": 0.05,
+        "legendary": 0.0
+      }
+    },
+    "eliteStage": {
+      "coins": [20, 40],
+      "playerMonsterExp": [10, 20],
+      "eggDropChance": {
+        "common": 0.5,
+        "rare": 0.12,
+        "legendary": 0.01
+      }
+    },
+    "bossStage": {
+      "coins": [40, 80],
+      "playerMonsterExp": [20, 35],
+      "eggDropChance": {
+        "common": 0.75,
+        "rare": 0.2,
+        "legendary": 0.03
+      }
+    }
+  },
+  "eggTypes": [
+    {
+      "name": "Common Egg",
+      "battlesToHatch": 3,
+      "rarityPool": ["common"]
+    },
+    {
+      "name": "Rare Egg",
+      "battlesToHatch": 5,
+      "rarityPool": ["common", "rare"]
+    },
+    {
+      "name": "Legendary Egg",
+      "battlesToHatch": 8,
+      "rarityPool": ["rare", "legendary"]
+    }
+  ],
+  "monsterFamilies": [
+    {
+      "familyId": "slime",
+      "element": "nature",
+      "evolutions": [
+        {
+          "name": "Small Slime",
+          "level": 1,
+          "rarity": "common"
+        },
+        {
+          "name": "Jump Slime",
+          "level": 10,
+          "rarity": "common"
+        },
+        {
+          "name": "Number Slime",
+          "level": 20,
+          "rarity": "rare"
+        },
+        {
+          "name": "Slime King",
+          "level": 40,
+          "rarity": "epic"
+        }
+      ]
+    },
+    {
+      "familyId": "sproutfox",
+      "element": "forest",
+      "evolutions": [
+        {
+          "name": "Bud Fox",
+          "level": 1,
+          "rarity": "common"
+        },
+        {
+          "name": "Sprout Fox",
+          "level": 15,
+          "rarity": "rare"
+        },
+        {
+          "name": "Bloomtail",
+          "level": 35,
+          "rarity": "epic"
+        }
+      ]
+    },
+    {
+      "familyId": "embercub",
+      "element": "fire",
+      "evolutions": [
+        {
+          "name": "Coal Cub",
+          "level": 1,
+          "rarity": "common"
+        },
+        {
+          "name": "Ember Cub",
+          "level": 18,
+          "rarity": "rare"
+        },
+        {
+          "name": "Volcub",
+          "level": 38,
+          "rarity": "epic"
+        }
+      ]
+    }
+  ],
+  "customizationCategories": [
+    "hats",
+    "costumes",
+    "trail-effects",
+    "pets"
+  ],
+  "monetization": {
+    "allowed": [
+      "monster-skins",
+      "character-outfits",
+      "special-egg-packs",
+      "remove-ads"
+    ],
+    "forbidden": [
+      "pay-to-win-stat-boosts",
+      "premium-only-stage-power",
+      "mandatory-spending-progression"
+    ]
+  }
+}

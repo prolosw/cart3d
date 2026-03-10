@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&display=swap" rel="stylesheet" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#13202a" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="마트 카트 런" />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Mart Cart Run" />
+  <meta property="og:description" content="A 3D arcade shopping run through a busy supermarket aisle." />
+  <meta property="og:image" content="./assets/main.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="896" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Mart Cart Run" />
+  <meta name="twitter:description" content="A 3D arcade shopping run through a busy supermarket aisle." />
+  <meta name="twitter:image" content="./assets/main.png" />
+  <title>마트 카트 런</title>
+  <link rel="manifest" href="./manifest.webmanifest" />
+  <link rel="icon" href="./assets/icon-192.png" sizes="192x192" type="image/png" />
+  <link rel="apple-touch-icon" href="./assets/icon-mart.png" />
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <main class="game-stage">
+    <canvas id="gameCanvas" aria-label="3D 마트 카트 런 게임 화면"></canvas>
+
+    <section class="hud-top glass-panel">
+      <div class="hud-top-copy">
+        <p class="eyebrow">장보기 리스트</p>
+        <h1>필요한 상품만 정확히 담기</h1>
+      </div>
+      <div id="shoppingList" class="shopping-list"></div>
+    </section>
+
+    <section class="hud-side glass-panel">
+      <div class="mini-stat">
+        <span class="label">레벨</span>
+        <strong id="levelValue">1</strong>
+        <span id="bestValue" class="muted">최고 레벨 1</span>
+      </div>
+      <div class="mini-stat">
+        <span class="label">기회 / 별</span>
+        <strong id="chanceValue" class="chance-display"><span id="chanceCount" class="chance-count">3</span><span id="chanceStars" class="chance-stars" aria-hidden="true"></span></strong>
+        <span id="statusText" class="muted">목표 수량만큼만 정확히 먹으세요</span>
+      </div>
+      <div class="mini-stat">
+        <span class="label">점수</span>
+        <strong id="scoreValue">0</strong>
+        <span id="progressText" class="muted">0 / 0 완료</span>
+      </div>
+      <div class="progress-wrap">
+        <div class="progress-track" aria-hidden="true">
+          <div id="progressFill" class="progress-fill"></div>
+        </div>
+      </div>
+    </section>
+
+    <div id="pickupToast" class="pickup-toast hidden" aria-live="polite"></div>
+
+    <section id="overlayCard" class="overlay-card">
+      <div class="overlay-panel glass-panel">
+        <p id="overlayEyebrow" class="eyebrow">준비</p>
+        <h2 id="overlayTitle">장보기 리스트를 확인하세요</h2>
+        <p id="overlayBody">게임 화면 위쪽 쇼핑 리스트를 보고 필요한 상품만 담으세요. 초과 수집은 즉시 실패이고, 장애물은 3번까지 버틸 수 있습니다.</p>
+        <div id="overlayMissionList" class="overlay-mission-list hidden"></div>
+        <div id="overlayCountdown" class="overlay-countdown hidden"></div>
+        <div class="overlay-actions">
+          <button id="startButton" class="primary-button" type="button">게임 시작</button>
+          <button id="overlayButton" class="secondary-button" type="button">다시 시작</button>
+        </div>
+        <section id="overlayRanking" class="overlay-ranking hidden">
+          <div class="ranking-header">
+            <p class="eyebrow">Ranking</p>
+            <p id="rankingStatus" class="ranking-status">랭킹을 불러오는 중...</p>
+          </div>
+          <div id="rankingList" class="ranking-list"></div>
+          <div id="rankingMine" class="ranking-mine hidden"></div>
+          <form id="nameForm" class="name-form hidden">
+            <label class="name-label" for="playerNameInput">이름 등록 / 수정</label>
+            <div class="name-row">
+              <input id="playerNameInput" class="name-input" type="text" maxlength="12" placeholder="이름을 입력하세요" autocomplete="nickname" />
+              <button id="saveNameButton" class="primary-button name-save" type="submit">저장</button>
+            </div>
+            <p id="nameHelp" class="name-help">최고기록을 세우면 이름을 저장할 수 있어요.</p>
+          </form>
+        </section>
+      </div>
+    </section>
+  </main>
+
+  <script type="module" src="./src/app.js"></script>
+</body>
+</html>
