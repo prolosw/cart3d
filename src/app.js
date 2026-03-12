@@ -39,81 +39,90 @@ const ui = {
   overlayPanel: document.querySelector(".overlay-panel")
 };
 
-const isKoreanLocale = (navigator.languages || [navigator.language || "ko"])
-  .some((value) => String(value || "").toLowerCase().startsWith("ko"));
+const preferredLocale = ((navigator.languages && navigator.languages[0]) || navigator.language || "ko").toLowerCase();
+const localeKey = preferredLocale.startsWith("ja")
+  ? "ja"
+  : preferredLocale.startsWith("zh")
+    ? "zh"
+    : preferredLocale.startsWith("ko")
+      ? "ko"
+      : "en";
 
 const productLocale = {
-  strawberries: { ko: "딸기", en: "Strawberries" },
-  milk: { ko: "우유", en: "Milk" },
-  onion: { ko: "양파", en: "Onion" },
-  bread: { ko: "식빵", en: "Bread" },
-  fish: { ko: "생선", en: "Fish" },
-  cereal: { ko: "시리얼", en: "Cereal" }
+  strawberries: { ko: "\uB538\uAE30", en: "Strawberries", ja: "\u3044\u3061\u3054", zh: "\u8349\u8393" },
+  milk: { ko: "\uC6B0\uC720", en: "Milk", ja: "\u725B\u4E73", zh: "\u725B\u5976" },
+  onion: { ko: "\uC591\uD30C", en: "Onion", ja: "\u305F\u307E\u306D\u304E", zh: "\u6D0B\u8471" },
+  bread: { ko: "\uC2DD\uBE75", en: "Bread", ja: "\u98DF\u30D1\u30F3", zh: "\u9762\u5305" },
+  fish: { ko: "\uC0DD\uC120", en: "Fish", ja: "\u9B5A", zh: "\u9C7C" },
+  cereal: { ko: "\uC2DC\uB9AC\uC5BC", en: "Cereal", ja: "\u30B7\u30EA\u30A2\u30EB", zh: "\u9EA6\u7247" }
 };
 
 const translations = {
   ko: {
-    title: "마트 카트 런",
-    shoppingEyebrow: "장보기 리스트",
-    shoppingTitle: "필요한 상품만 정확히 담기",
-    levelLabel: "레벨",
-    chanceLabel: "기회 / 별",
-    scoreLabel: "점수",
-    ready: "준비",
-    start3d: "3D 마트 장보기를 시작하세요",
-    introBody: "시작 버튼을 누르면 이번 레벨의 장보기 리스트가 화면 가운데에 크게 나타나고, 3초 카운트다운 뒤 출발합니다. 모든 상품을 정확히 담으면 바로 끝나지 않고 계산대까지 5초 더 달립니다.",
-    startGame: "게임 시작",
-    restart: "다시 시작",
-    loadingRanking: "랭킹을 불러오는 중...",
-    nameLabel: "이름 등록 / 수정",
-    namePlaceholder: "이름을 입력하세요",
-    save: "저장",
-    saveNameHint: "최고기록을 세우면 이름을 저장할 수 있어요.",
-    bestLevel: (level) => `최고 레벨 ${level}`,
-    progressDone: (current, total) => `${current} / ${total} 완료`,
-    statusCleared: "계산 완료, 다음 장보기 준비",
-    statusFailed: "수량 초과 또는 충돌 3회로 실패",
-    statusCheckout: (sec) => `장보기 완료, 계산대까지 ${sec}초`,
-    statusCountdown: (sec) => `출발까지 ${sec}초`,
-    statusRunning: "장애물을 피하면서 목표 수량을 정확히 담으세요",
-    missionCheckTitle: "장보기 리스트 확인",
-    missionCheckBody: "필요한 상품을 정확히 담은 뒤 계산대까지 도착하세요. 3초 뒤 출발합니다.",
-    shoppingDoneToast: "장보기 완료! 계산대로 이동하세요",
-    collectToast: (name, current, target) => `${name} ${current}/${target} 담았어요`,
-    failEyebrow: "도전 실패",
-    currentScoreLine: (score) => ` 현재 점수는 ${score}점입니다. 다시 시작하면 1레벨부터 시작합니다.`,
-    restartFromBeginning: "처음부터 다시",
-    checkoutEyebrow: "계산 완료",
-    clearTitle: (level) => `레벨 ${level} 클리어`,
-    clearBody: (checkoutPoints, starBonus, levelBonus) => `계산대에 도착해서 상품 점수 ${checkoutPoints}점, 별 보너스 ${starBonus}점, 레벨 보너스 ${levelBonus}점을 정산했어요.`,
-    nextLevel: "다음 레벨",
-    rankingExistingName: "기존 이름을 수정할 수 있어요.",
-    rankingEnterName: "이름을 입력하면 내 기록에 반영돼요.",
-    rankingPersonalBest: "신기록이에요. 내 이름을 눌러 바로 저장하거나 수정해 보세요.",
-    rankingLive: "실시간 최고 기록 랭킹",
-    noRecord: "기록 없음",
-    myRank: "내 순위",
-    unnamed: "이름 미등록",
-    rankingHelpPersonalBest: "신기록을 세웠어요. 랭킹의 내 이름을 누르면 바로 저장하거나 수정할 수 있어요.",
-    rankingHelpLocked: "이름 수정은 신기록을 세웠을 때만 할 수 있어요.",
-    rankingHelpNew: "신기록을 세우면 랭킹에 이름을 등록할 수 있어요.",
-    rankingLoadFailed: "랭킹을 불러오지 못했어요.",
-    serverCheck: "서버 연결을 확인해 주세요",
-    enterNameLonger: "이름을 1글자 이상 입력해 주세요.",
-    savingName: "이름을 저장하는 중...",
-    nameSaved: "이름이 저장됐어요.",
-    nameSaveFailed: "이름을 저장하지 못했어요. 잠시 후 다시 시도해 주세요.",
-    mobilePause: "잠시 멈춤",
-    gpuReconnect: "그래픽 장치가 다시 연결되는 중이에요",
-    gpuBody: "모바일 기기에서 그래픽 메모리가 잠깐 부족해질 수 있어요. 잠시 후 다시 시작 버튼을 눌러 이어가세요.",
-    shopperFailed: (level) => `레벨 ${level}의 장보기를 끝내지 못했어요.`,
-    knockedTitle: "3번 부딪혀서 카트가 뒤집혔어요",
-    cartFell: "카트가 넘어졌어요",
-    tooMany: (name) => `${name}을 너무 많이 담았어요`,
-    tooManyBody: (name, target, current) => `${name} 목표는 ${target}개인데 ${current}개를 담아서 수량이 초과됐어요.`,
-    goalTarget: (count) => `목표 ${count}개`,
-    points: (value) => `${value}점`,
-    rank: (value) => `${value}위`
+    title: "\uB9C8\uD2B8 \uCE74\uD2B8 \uB7F0",
+    shoppingEyebrow: "\uC7A5\uBCF4\uAE30 \uB9AC\uC2A4\uD2B8",
+    shoppingTitle: "\uD544\uC694\uD55C \uC0C1\uD488\uB9CC \uC815\uD655\uD788 \uB2F4\uAE30",
+    levelLabel: "\uB808\uBCA8",
+    chanceLabel: "\uAE30\uD68C / \uBCC4",
+    scoreLabel: "\uC810\uC218",
+    ready: "\uC900\uBE44",
+    start3d: "3D \uB9C8\uD2B8 \uC7A5\uBCF4\uAE30\uB97C \uC2DC\uC791\uD558\uC138\uC694",
+    introBody: "\uC2DC\uC791 \uBC84\uD2BC\uC744 \uB204\uB974\uBA74 \uC774\uBC88 \uB808\uBCA8\uC758 \uC7A5\uBCF4\uAE30 \uB9AC\uC2A4\uD2B8\uAC00 \uD654\uBA74 \uAC00\uC6B4\uB370\uC5D0 \uD06C\uAC8C \uB098\uD0C0\uB098\uACE0, 3\uCD08 \uCE74\uC6B4\uD2B8\uB2E4\uC6B4 \uB4A4 \uCD9C\uBC1C\uD569\uB2C8\uB2E4. \uBAA8\uB4E0 \uC0C1\uD488\uC744 \uC815\uD655\uD788 \uB2F4\uC73C\uBA74 \uBC14\uB85C \uB05D\uB098\uC9C0 \uC54A\uACE0 \uACC4\uC0B0\uB300\uAE4C\uC9C0 5\uCD08 \uB354 \uB2EC\uB9BD\uB2C8\uB2E4.",
+    startGame: "\uAC8C\uC784 \uC2DC\uC791",
+    restart: "\uB2E4\uC2DC \uC2DC\uC791",
+    loadingRanking: "\uB7AD\uD0B9\uC744 \uBD88\uB7EC\uC624\uB294 \uC911...",
+    nameLabel: "\uC774\uB984 \uB4F1\uB85D / \uC218\uC815",
+    namePlaceholder: "\uC774\uB984\uC744 \uC785\uB825\uD558\uC138\uC694",
+    save: "\uC800\uC7A5",
+    saveNameHint: "\uCD5C\uACE0\uAE30\uB85D\uC744 \uC138\uC6B0\uBA74 \uC774\uB984\uC744 \uC800\uC7A5\uD560 \uC218 \uC788\uC5B4\uC694.",
+    bestLevel: (level) => `\uCD5C\uACE0 \uB808\uBCA8 ${level}`,
+    progressDone: (current, total) => `${current} / ${total} \uC644\uB8CC`,
+    statusCleared: "\uACC4\uC0B0 \uC644\uB8CC, \uB2E4\uC74C \uC7A5\uBCF4\uAE30 \uC900\uBE44",
+    statusFailed: "\uC218\uB7C9 \uCD08\uACFC \uB610\uB294 \uCDA9\uB3CC 3\uD68C\uB85C \uC2E4\uD328",
+    statusCheckout: (sec) => `\uC7A5\uBCF4\uAE30 \uC644\uB8CC, \uACC4\uC0B0\uB300\uAE4C\uC9C0 ${sec}\uCD08`,
+    statusCountdown: (sec) => `\uCD9C\uBC1C\uAE4C\uC9C0 ${sec}\uCD08`,
+    statusRunning: "\uC7A5\uC560\uBB3C\uC744 \uD53C\uD558\uBA74\uC11C \uBAA9\uD45C \uC218\uB7C9\uC744 \uC815\uD655\uD788 \uB2F4\uC73C\uC138\uC694",
+    statusHit: (hits) => `\uBD80\uB52A\uD798 ${hits}/3, \uACC4\uC18D \uC9C4\uD589 \uC911`,
+    missionCheckTitle: "\uC7A5\uBCF4\uAE30 \uB9AC\uC2A4\uD2B8 \uD655\uC778",
+    missionCheckBody: "\uD544\uC694\uD55C \uC0C1\uD488\uC744 \uC815\uD655\uD788 \uB2F4\uC740 \uB4A4 \uACC4\uC0B0\uB300\uAE4C\uC9C0 \uB3C4\uCC29\uD558\uC138\uC694. 3\uCD08 \uB4A4 \uCD9C\uBC1C\uD569\uB2C8\uB2E4.",
+    shoppingDoneToast: "\uC7A5\uBCF4\uAE30 \uC644\uB8CC! \uACC4\uC0B0\uB300\uB85C \uC774\uB3D9\uD558\uC138\uC694",
+    collectToast: (name, current, target) => `${name} ${current}/${target} \uB2F4\uC558\uC5B4\uC694`,
+    failEyebrow: "\uB3C4\uC804 \uC2E4\uD328",
+    currentScoreLine: (score) => ` \uD604\uC7AC \uC810\uC218\uB294 ${score}\uC810\uC785\uB2C8\uB2E4. \uB2E4\uC2DC \uC2DC\uC791\uD558\uBA74 1\uB808\uBCA8\uBD80\uD130 \uC2DC\uC791\uD569\uB2C8\uB2E4.`,
+    restartFromBeginning: "\uCC98\uC74C\uBD80\uD130 \uB2E4\uC2DC",
+    checkoutEyebrow: "\uACC4\uC0B0 \uC644\uB8CC",
+    clearTitle: (level) => `\uB808\uBCA8 ${level} \uD074\uB9AC\uC5B4`,
+    clearBody: (checkoutPoints, starBonus, levelBonus) => `\uACC4\uC0B0\uB300\uC5D0 \uB3C4\uCC29\uD574\uC11C \uC0C1\uD488 \uC810\uC218 ${checkoutPoints}\uC810, \uBCC4 \uBCF4\uB108\uC2A4 ${starBonus}\uC810, \uB808\uBCA8 \uBCF4\uB108\uC2A4 ${levelBonus}\uC810\uC744 \uC815\uC0B0\uD588\uC5B4\uC694.`,
+    nextLevel: "\uB2E4\uC74C \uB808\uBCA8",
+    rankingExistingName: "\uAE30\uC874 \uC774\uB984\uC744 \uC218\uC815\uD560 \uC218 \uC788\uC5B4\uC694.",
+    rankingEnterName: "\uC774\uB984\uC744 \uC785\uB825\uD558\uBA74 \uB0B4 \uAE30\uB85D\uC5D0 \uBC18\uC601\uB3FC\uC694.",
+    rankingPersonalBest: "\uC2E0\uAE30\uB85D\uC774\uC5D0\uC694. \uB0B4 \uC774\uB984\uC744 \uB20C\uB7EC \uBC14\uB85C \uC800\uC7A5\uD558\uAC70\uB098 \uC218\uC815\uD574 \uBCF4\uC138\uC694.",
+    rankingLive: "\uC2E4\uC2DC\uAC04 \uCD5C\uACE0 \uAE30\uB85D \uB7AD\uD0B9",
+    noRecord: "\uAE30\uB85D \uC5C6\uC74C",
+    myRank: "\uB0B4 \uC21C\uC704",
+    unnamed: "\uC774\uB984 \uBBF8\uB4F1\uB85D",
+    rankingHelpPersonalBest: "\uC2E0\uAE30\uB85D\uC744 \uC138\uC6E0\uC5B4\uC694. \uB7AD\uD0B9\uC758 \uB0B4 \uC774\uB984\uC744 \uB204\uB974\uBA74 \uBC14\uB85C \uC800\uC7A5\uD558\uAC70\uB098 \uC218\uC815\uD560 \uC218 \uC788\uC5B4\uC694.",
+    rankingHelpLocked: "\uC774\uB984 \uC218\uC815\uC740 \uC2E0\uAE30\uB85D\uC744 \uC138\uC6E0\uC744 \uB54C\uB9CC \uD560 \uC218 \uC788\uC5B4\uC694.",
+    rankingHelpNew: "\uC2E0\uAE30\uB85D\uC744 \uC138\uC6B0\uBA74 \uB7AD\uD0B9\uC5D0 \uC774\uB984\uC744 \uB4F1\uB85D\uD560 \uC218 \uC788\uC5B4\uC694.",
+    rankingLoadFailed: "\uB7AD\uD0B9\uC744 \uBD88\uB7EC\uC624\uC9C0 \uBABB\uD588\uC5B4\uC694.",
+    serverCheck: "\uC11C\uBC84 \uC5F0\uACB0\uC744 \uD655\uC778\uD574 \uC8FC\uC138\uC694",
+    enterNameLonger: "\uC774\uB984\uC744 1\uAE00\uC790 \uC774\uC0C1 \uC785\uB825\uD574 \uC8FC\uC138\uC694.",
+    savingName: "\uC774\uB984\uC744 \uC800\uC7A5\uD558\uB294 \uC911...",
+    nameSaved: "\uC774\uB984\uC774 \uC800\uC7A5\uB410\uC5B4\uC694.",
+    nameSaveFailed: "\uC774\uB984\uC744 \uC800\uC7A5\uD558\uC9C0 \uBABB\uD588\uC5B4\uC694. \uC7A0\uC2DC \uD6C4 \uB2E4\uC2DC \uC2DC\uB3C4\uD574 \uC8FC\uC138\uC694.",
+    mobilePause: "\uC7A0\uC2DC \uBA48\uCDA4",
+    gpuReconnect: "\uADF8\uB798\uD53D \uC7A5\uCE58\uAC00 \uB2E4\uC2DC \uC5F0\uACB0\uB418\uB294 \uC911\uC774\uC5D0\uC694",
+    gpuBody: "\uBAA8\uBC14\uC77C \uAE30\uAE30\uC5D0\uC11C \uADF8\uB798\uD53D \uBA54\uBAA8\uB9AC\uAC00 \uC7A0\uAE50 \uBD80\uC871\uD574\uC9C8 \uC218 \uC788\uC5B4\uC694. \uC7A0\uC2DC \uD6C4 \uB2E4\uC2DC \uC2DC\uC791 \uBC84\uD2BC\uC744 \uB20C\uB7EC \uC774\uC5B4\uAC00\uC138\uC694.",
+    shopperFailed: (level) => `\uB808\uBCA8 ${level}\uC758 \uC7A5\uBCF4\uAE30\uB97C \uB05D\uB0B4\uC9C0 \uBABB\uD588\uC5B4\uC694.`,
+    knockedTitle: "3\uBC88 \uBD80\uB52A\uD600\uC11C \uCE74\uD2B8\uAC00 \uB4A4\uC9D1\uD614\uC5B4\uC694",
+    cartFell: "\uCE74\uD2B8\uAC00 \uB118\uC5B4\uC84C\uC5B4\uC694",
+    tooMany: (name) => `${name}\uC744 \uB108\uBB34 \uB9CE\uC774 \uB2F4\uC558\uC5B4\uC694`,
+    tooManyBody: (name, target, current) => `${name} \uBAA9\uD45C\uB294 ${target}\uAC1C\uC778\uB370 ${current}\uAC1C\uB97C \uB2F4\uC544\uC11C \uC218\uB7C9\uC774 \uCD08\uACFC\uB410\uC5B4\uC694.`,
+    goalTarget: (count) => `\uBAA9\uD45C ${count}\uAC1C`,
+    points: (value) => `${value}\uC810`,
+    rank: (value) => `${value}\uC704`,
+    emptyCartTitle: "\uBE48 \uCE74\uD2B8",
+    emptyCartBody: "\uC544\uC9C1 \uB2F4\uC740 \uC0C1\uD488\uC774 \uC5C6\uC5B4\uC694"
   },
   en: {
     title: "Mart Cart Run",
@@ -139,6 +148,7 @@ const translations = {
     statusCheckout: (sec) => `Shopping done, checkout in ${sec}s`,
     statusCountdown: (sec) => `Starts in ${sec}s`,
     statusRunning: "Avoid obstacles and collect the exact target count",
+    statusHit: (hits) => `Crash ${hits}/3, keep going`,
     missionCheckTitle: "Check Your Shopping List",
     missionCheckBody: "Collect every required item exactly, then make it to checkout. You start in 3 seconds.",
     shoppingDoneToast: "Shopping complete! Head to checkout",
@@ -176,14 +186,148 @@ const translations = {
     tooManyBody: (name, target, current) => `The target for ${name} was ${target}, but you picked ${current}, so the count went over.`,
     goalTarget: (count) => `Target ${count}`,
     points: (value) => `${value} pts`,
-    rank: (value) => `#${value}`
+    rank: (value) => `#${value}`,
+    emptyCartTitle: "Empty Cart",
+    emptyCartBody: "No items collected yet"
+  },
+  ja: {
+    title: "\u30B9\u30FC\u30D1\u30FC\u30AB\u30FC\u30C8\u30E9\u30F3",
+    shoppingEyebrow: "\u8CB7\u3044\u7269\u30EA\u30B9\u30C8",
+    shoppingTitle: "\u5FC5\u8981\u306A\u5546\u54C1\u3060\u3051\u3092\u6B63\u78BA\u306B\u96C6\u3081\u3066\u304F\u3060\u3055\u3044",
+    levelLabel: "\u30EC\u30D9\u30EB",
+    chanceLabel: "\u6B8B\u6A5F / \u30B9\u30BF\u30FC",
+    scoreLabel: "\u30B9\u30B3\u30A2",
+    ready: "\u6E96\u5099",
+    start3d: "3D\u30B9\u30FC\u30D1\u30FC\u30A2\u30FC\u30B1\u30FC\u30C9\u3092\u59CB\u3081\u307E\u3057\u3087\u3046",
+    introBody: "\u30B9\u30BF\u30FC\u30C8\u3092\u62BC\u3059\u3068\u3001\u3053\u306E\u30EC\u30D9\u30EB\u306E\u8CB7\u3044\u7269\u30EA\u30B9\u30C8\u304C\u753B\u9762\u4E2D\u592E\u306B\u5927\u304D\u304F\u8868\u793A\u3055\u308C\u30013\u79D2\u5F8C\u306B\u30B9\u30BF\u30FC\u30C8\u3057\u307E\u3059\u3002\u3059\u3079\u3066\u6B63\u78BA\u306B\u96C6\u3081\u3066\u3082\u3001\u30EC\u30B8\u307E\u3067\u3055\u3089\u306B5\u79D2\u8D70\u308B\u5FC5\u8981\u304C\u3042\u308A\u307E\u3059\u3002",
+    startGame: "\u30B2\u30FC\u30E0\u958B\u59CB",
+    restart: "\u3082\u3046\u4E00\u5EA6",
+    loadingRanking: "\u30E9\u30F3\u30AD\u30F3\u30B0\u3092\u8AAD\u307F\u8FBC\u307F\u4E2D...",
+    nameLabel: "\u540D\u524D\u767B\u9332 / \u5909\u66F4",
+    namePlaceholder: "\u540D\u524D\u3092\u5165\u529B\u3057\u3066\u304F\u3060\u3055\u3044",
+    save: "\u4FDD\u5B58",
+    saveNameHint: "\u6700\u9AD8\u8A18\u9332\u3092\u66F4\u65B0\u3059\u308B\u3068\u540D\u524D\u3092\u4FDD\u5B58\u3067\u304D\u307E\u3059\u3002",
+    bestLevel: (level) => `\u6700\u9AD8\u30EC\u30D9\u30EB ${level}`,
+    progressDone: (current, total) => `${current} / ${total} \u5B8C\u4E86`,
+    statusCleared: "\u30C1\u30A7\u30C3\u30AF\u30A2\u30A6\u30C8\u5B8C\u4E86\u3001\u6B21\u306E\u30E9\u30F3\u6E96\u5099\u5B8C\u4E86",
+    statusFailed: "\u53D6\u308A\u3059\u304E\u307E\u305F\u306F3\u56DE\u885D\u7A81\u3067\u5931\u6557",
+    statusCheckout: (sec) => `\u8CB7\u3044\u7269\u5B8C\u4E86\u3001\u30EC\u30B8\u307E\u3067 ${sec}\u79D2`,
+    statusCountdown: (sec) => `${sec}\u79D2\u5F8C\u306B\u30B9\u30BF\u30FC\u30C8`,
+    statusRunning: "\u969C\u5BB3\u7269\u3092\u907F\u3051\u306A\u304C\u3089\u76EE\u6A19\u6570\u3092\u6B63\u78BA\u306B\u96C6\u3081\u3066\u304F\u3060\u3055\u3044",
+    statusHit: (hits) => `\u885D\u7A81 ${hits}/3\u3001\u307E\u3060\u7D9A\u884C\u3067\u304D\u307E\u3059`,
+    missionCheckTitle: "\u8CB7\u3044\u7269\u30EA\u30B9\u30C8\u78BA\u8A8D",
+    missionCheckBody: "\u5FC5\u8981\u306A\u5546\u54C1\u3092\u6B63\u78BA\u306B\u96C6\u3081\u3001\u305D\u306E\u5F8C\u30EC\u30B8\u307E\u3067\u5230\u9054\u3057\u3066\u304F\u3060\u3055\u3044\u30023\u79D2\u5F8C\u306B\u30B9\u30BF\u30FC\u30C8\u3057\u307E\u3059\u3002",
+    shoppingDoneToast: "\u8CB7\u3044\u7269\u5B8C\u4E86\uFF01\u30EC\u30B8\u3078\u5411\u304B\u3044\u307E\u3057\u3087\u3046",
+    collectToast: (name, current, target) => `${name} ${current}/${target} \u53CE\u96C6`,
+    failEyebrow: "\u30C1\u30E3\u30EC\u30F3\u30B8\u5931\u6557",
+    currentScoreLine: (score) => ` \u73FE\u5728\u306E\u30B9\u30B3\u30A2\u306F ${score} \u3067\u3059\u3002\u518D\u958B\u3059\u308B\u30681\u30EC\u30D9\u30EB\u304B\u3089\u59CB\u307E\u308A\u307E\u3059\u3002`,
+    restartFromBeginning: "\u30EC\u30D9\u30EB1\u304B\u3089\u3084\u308A\u76F4\u3059",
+    checkoutEyebrow: "\u30C1\u30A7\u30C3\u30AF\u30A2\u30A6\u30C8\u5B8C\u4E86",
+    clearTitle: (level) => `\u30EC\u30D9\u30EB ${level} \u30AF\u30EA\u30A2`,
+    clearBody: (checkoutPoints, starBonus, levelBonus) => `\u30C1\u30A7\u30C3\u30AF\u30A2\u30A6\u30C8\u306B\u5230\u9054\u3057\u3001\u5546\u54C1\u30DD\u30A4\u30F3\u30C8 ${checkoutPoints}\u70B9\u3001\u30B9\u30BF\u30FC\u30DC\u30FC\u30CA\u30B9 ${starBonus}\u70B9\u3001\u30EC\u30D9\u30EB\u30DC\u30FC\u30CA\u30B9 ${levelBonus}\u70B9\u3092\u7372\u5F97\u3057\u307E\u3057\u305F\u3002`,
+    nextLevel: "\u6B21\u306E\u30EC\u30D9\u30EB",
+    rankingExistingName: "\u4FDD\u5B58\u6E08\u307F\u306E\u540D\u524D\u3092\u66F4\u65B0\u3067\u304D\u307E\u3059\u3002",
+    rankingEnterName: "\u3053\u306E\u8A18\u9332\u306B\u540D\u524D\u3092\u767B\u9332\u3067\u304D\u307E\u3059\u3002",
+    rankingPersonalBest: "\u65B0\u8A18\u9332\u3067\u3059\u3002\u81EA\u5206\u306E\u540D\u524D\u3092\u30BF\u30C3\u30D7\u3059\u308B\u3068\u3059\u3050\u306B\u4FDD\u5B58\u307E\u305F\u306F\u7DE8\u96C6\u3067\u304D\u307E\u3059\u3002",
+    rankingLive: "\u30EA\u30A2\u30EB\u30BF\u30A4\u30E0\u30E9\u30F3\u30AD\u30F3\u30B0",
+    noRecord: "\u8A18\u9332\u306A\u3057",
+    myRank: "\u81EA\u5206\u306E\u9806\u4F4D",
+    unnamed: "\u540D\u524D\u306A\u3057",
+    rankingHelpPersonalBest: "\u65B0\u8A18\u9332\u3067\u3059\u3002\u30E9\u30F3\u30AD\u30F3\u30B0\u4E0A\u306E\u81EA\u5206\u306E\u540D\u524D\u3092\u30BF\u30C3\u30D7\u3059\u308B\u3068\u3059\u3050\u306B\u4FDD\u5B58\u307E\u305F\u306F\u7DE8\u96C6\u3067\u304D\u307E\u3059\u3002",
+    rankingHelpLocked: "\u540D\u524D\u306E\u5909\u66F4\u306F\u81EA\u5DF1\u6700\u9AD8\u8A18\u9332\u306E\u3068\u304D\u3060\u3051\u3067\u3059\u3002",
+    rankingHelpNew: "\u81EA\u5DF1\u6700\u9AD8\u8A18\u9332\u3092\u51FA\u3059\u3068\u540D\u524D\u3092\u767B\u9332\u3067\u304D\u307E\u3059\u3002",
+    rankingLoadFailed: "\u30E9\u30F3\u30AD\u30F3\u30B0\u3092\u8AAD\u307F\u8FBC\u3081\u307E\u305B\u3093\u3067\u3057\u305F\u3002",
+    serverCheck: "\u30B5\u30FC\u30D0\u30FC\u63A5\u7D9A\u3092\u78BA\u8A8D\u3057\u3066\u304F\u3060\u3055\u3044",
+    enterNameLonger: "1\u6587\u5B57\u4EE5\u4E0A\u306E\u540D\u524D\u3092\u5165\u529B\u3057\u3066\u304F\u3060\u3055\u3044\u3002",
+    savingName: "\u540D\u524D\u3092\u4FDD\u5B58\u4E2D...",
+    nameSaved: "\u540D\u524D\u3092\u4FDD\u5B58\u3057\u307E\u3057\u305F\u3002",
+    nameSaveFailed: "\u540D\u524D\u3092\u4FDD\u5B58\u3067\u304D\u307E\u305B\u3093\u3067\u3057\u305F\u3002\u5C11\u3057\u304A\u3044\u3066\u304B\u3089\u3082\u3046\u4E00\u5EA6\u304A\u8A66\u3057\u304F\u3060\u3055\u3044\u3002",
+    mobilePause: "\u4E00\u6642\u505C\u6B62",
+    gpuReconnect: "\u30B0\u30E9\u30D5\u30A3\u30C3\u30AF\u88C5\u7F6E\u3092\u518D\u63A5\u7D9A\u4E2D\u3067\u3059",
+    gpuBody: "\u30E2\u30D0\u30A4\u30EB\u3067\u306F\u4E00\u6642\u7684\u306B\u30B0\u30E9\u30D5\u30A3\u30C3\u30AF\u30E1\u30E2\u30EA\u304C\u4E0D\u8DB3\u3059\u308B\u3053\u3068\u304C\u3042\u308A\u307E\u3059\u3002\u5C11\u3057\u6642\u9593\u3092\u304A\u3044\u3066\u304B\u3089\u518D\u5EA6\u958B\u59CB\u3057\u3066\u304F\u3060\u3055\u3044\u3002",
+    shopperFailed: (level) => `\u30EC\u30D9\u30EB ${level} \u306E\u8CB7\u3044\u7269\u3092\u5B8C\u4E86\u3067\u304D\u307E\u305B\u3093\u3067\u3057\u305F\u3002`,
+    knockedTitle: "3\u56DE\u885D\u7A81\u3057\u3066\u30AB\u30FC\u30C8\u304C\u8EE2\u5012\u3057\u307E\u3057\u305F",
+    cartFell: "\u30AB\u30FC\u30C8\u304C\u5012\u308C\u307E\u3057\u305F",
+    tooMany: (name) => `${name} \u3092\u53D6\u308A\u3059\u304E\u307E\u3057\u305F`,
+    tooManyBody: (name, target, current) => `${name} \u306E\u76EE\u6A19\u306F ${target} \u500B\u3067\u3057\u305F\u304C\u3001${current} \u500B\u53D6\u3063\u3066\u3057\u307E\u3044\u307E\u3057\u305F\u3002`,
+    goalTarget: (count) => `\u76EE\u6A19 ${count}`,
+    points: (value) => `${value}pt`,
+    rank: (value) => `${value}\u4F4D`,
+    emptyCartTitle: "\u7A7A\u306E\u30AB\u30FC\u30C8",
+    emptyCartBody: "\u307E\u3060\u5546\u54C1\u3092\u96C6\u3081\u3066\u3044\u307E\u305B\u3093"
+  },
+  zh: {
+    title: "\u8D85\u5E02\u8D2D\u7269\u8F66\u51B2\u523A",
+    shoppingEyebrow: "\u8D2D\u7269\u6E05\u5355",
+    shoppingTitle: "\u53EA\u6536\u96C6\u4F60\u9700\u8981\u7684\u51C6\u786E\u5546\u54C1",
+    levelLabel: "\u5173\u5361",
+    chanceLabel: "\u673A\u4F1A / \u661F\u661F",
+    scoreLabel: "\u5206\u6570",
+    ready: "\u51C6\u5907",
+    start3d: "\u5F00\u59CB 3D \u8D85\u5E02\u8D2D\u7269\u51B2\u523A",
+    introBody: "\u70B9\u51FB\u5F00\u59CB\u540E\uFF0C\u672C\u5173\u7684\u8D2D\u7269\u6E05\u5355\u4F1A\u5728\u5C4F\u5E55\u4E2D\u592E\u5927\u5E45\u663E\u793A\uFF0C3\u79D2\u5012\u8BA1\u65F6\u540E\u51FA\u53D1\u3002\u5373\u4F7F\u4F60\u51C6\u786E\u6536\u96C6\u4E86\u6240\u6709\u5546\u54C1\uFF0C\u4ECD\u9700\u8981\u518D\u575A\u6301 5 \u79D2\u5230\u8FBE\u6536\u94F6\u53F0\u3002",
+    startGame: "\u5F00\u59CB\u6E38\u620F",
+    restart: "\u91CD\u65B0\u5F00\u59CB",
+    loadingRanking: "\u6B63\u5728\u52A0\u8F7D\u6392\u884C\u699C...",
+    nameLabel: "\u59D3\u540D\u4FDD\u5B58 / \u4FEE\u6539",
+    namePlaceholder: "\u8BF7\u8F93\u5165\u540D\u5B57",
+    save: "\u4FDD\u5B58",
+    saveNameHint: "\u521B\u9020\u6700\u9AD8\u7EAA\u5F55\u540E\u53EF\u4EE5\u4FDD\u5B58\u540D\u5B57\u3002",
+    bestLevel: (level) => `\u6700\u9AD8\u5173\u5361 ${level}`,
+    progressDone: (current, total) => `${current} / ${total} \u5B8C\u6210`,
+    statusCleared: "\u7ED3\u8D26\u5B8C\u6210\uFF0C\u51C6\u5907\u4E0B\u4E00\u8F6E",
+    statusFailed: "\u56E0\u6536\u96C6\u8FC7\u591A\u6216 3 \u6B21\u78B0\u649E\u800C\u5931\u8D25",
+    statusCheckout: (sec) => `\u8D2D\u7269\u5DF2\u5B8C\u6210\uFF0C${sec}\u79D2\u540E\u5230\u8FBE\u6536\u94F6\u53F0`,
+    statusCountdown: (sec) => `${sec}\u79D2\u540E\u51FA\u53D1`,
+    statusRunning: "\u907F\u5F00\u969C\u788D\u7269\u5E76\u51C6\u786E\u6536\u96C6\u76EE\u6807\u6570\u91CF",
+    statusHit: (hits) => `\u78B0\u649E ${hits}/3\uFF0C\u4ECD\u53EF\u7EE7\u7EED`,
+    missionCheckTitle: "\u786E\u8BA4\u8D2D\u7269\u6E05\u5355",
+    missionCheckBody: "\u8BF7\u51C6\u786E\u6536\u96C6\u6240\u6709\u9700\u8981\u7684\u5546\u54C1\uFF0C\u7136\u540E\u5230\u8FBE\u6536\u94F6\u53F0\u30023\u79D2\u540E\u5F00\u59CB\u3002",
+    shoppingDoneToast: "\u8D2D\u7269\u5DF2\u5B8C\u6210\uFF01\u8BF7\u524D\u5F80\u6536\u94F6\u53F0",
+    collectToast: (name, current, target) => `${name} ${current}/${target} \u5DF2\u6536\u96C6`,
+    failEyebrow: "\u6311\u6218\u5931\u8D25",
+    currentScoreLine: (score) => ` \u4F60\u7684\u672C\u6B21\u5206\u6570\u4E3A ${score}\u3002\u91CD\u5F00\u5C06\u4ECE\u7B2C 1 \u5173\u5F00\u59CB\u3002`,
+    restartFromBeginning: "\u4ECE\u7B2C 1 \u5173\u91CD\u65B0\u5F00\u59CB",
+    checkoutEyebrow: "\u7ED3\u8D26\u5B8C\u6210",
+    clearTitle: (level) => `\u7B2C ${level} \u5173\u901A\u5173`,
+    clearBody: (checkoutPoints, starBonus, levelBonus) => `\u4F60\u5DF2\u5230\u8FBE\u6536\u94F6\u53F0\uFF0C\u83B7\u5F97 ${checkoutPoints} \u70B9\u5546\u54C1\u5206\u3001${starBonus} \u70B9\u661F\u661F\u5956\u52B1\u4EE5\u53CA ${levelBonus} \u70B9\u5173\u5361\u52A0\u6210\u3002`,
+    nextLevel: "\u4E0B\u4E00\u5173",
+    rankingExistingName: "\u4F60\u53EF\u4EE5\u66F4\u65B0\u5DF2\u4FDD\u5B58\u7684\u540D\u5B57\u3002",
+    rankingEnterName: "\u8F93\u5165\u540D\u5B57\u540E\u4F1A\u7ED1\u5B9A\u5230\u8FD9\u6761\u8BB0\u5F55\u3002",
+    rankingPersonalBest: "\u65B0\u7EAA\u5F55\uFF01\u70B9\u51FB\u4F60\u7684\u540D\u5B57\u5373\u53EF\u7ACB\u5373\u4FDD\u5B58\u6216\u4FEE\u6539\u3002",
+    rankingLive: "\u5B9E\u65F6\u6392\u884C\u699C",
+    noRecord: "\u6682\u65E0\u8BB0\u5F55",
+    myRank: "\u6211\u7684\u6392\u540D",
+    unnamed: "\u672A\u547D\u540D",
+    rankingHelpPersonalBest: "\u4F60\u521B\u9020\u4E86\u65B0\u7EAA\u5F55\u3002\u70B9\u51FB\u6392\u884C\u4E2D\u7684\u59D3\u540D\u53EF\u76F4\u63A5\u4FDD\u5B58\u6216\u4FEE\u6539\u3002",
+    rankingHelpLocked: "\u53EA\u6709\u521B\u9020\u65B0\u7EAA\u5F55\u65F6\u624D\u80FD\u4FEE\u6539\u59D3\u540D\u3002",
+    rankingHelpNew: "\u6253\u7834\u4E2A\u4EBA\u6700\u9AD8\u7EAA\u5F55\u540E\u53EF\u4EE5\u767B\u8BB0\u540D\u5B57\u3002",
+    rankingLoadFailed: "\u65E0\u6CD5\u52A0\u8F7D\u6392\u884C\u699C\u3002",
+    serverCheck: "\u8BF7\u68C0\u67E5\u670D\u52A1\u5668\u8FDE\u63A5",
+    enterNameLonger: "\u8BF7\u81F3\u5C11\u8F93\u5165 1 \u4E2A\u5B57\u7B26\u3002",
+    savingName: "\u6B63\u5728\u4FDD\u5B58\u540D\u5B57...",
+    nameSaved: "\u540D\u5B57\u5DF2\u4FDD\u5B58\u3002",
+    nameSaveFailed: "\u65E0\u6CD5\u4FDD\u5B58\u540D\u5B57\u3002\u8BF7\u7A0D\u540E\u518D\u8BD5\u3002",
+    mobilePause: "\u5DF2\u6682\u505C",
+    gpuReconnect: "\u6B63\u5728\u91CD\u65B0\u8FDE\u63A5\u56FE\u5F62\u8BBE\u5907",
+    gpuBody: "\u5728\u79FB\u52A8\u8BBE\u5907\u4E0A\u56FE\u5F62\u5185\u5B58\u53EF\u80FD\u4F1A\u77ED\u6682\u4E0D\u8DB3\u3002\u8BF7\u7A0D\u7B49\u7247\u523B\u540E\u518D\u6B21\u70B9\u51FB\u91CD\u5F00\u7EE7\u7EED\u3002",
+    shopperFailed: (level) => `\u4F60\u6CA1\u80FD\u5B8C\u6210\u7B2C ${level} \u5173\u7684\u8D2D\u7269\u6311\u6218\u3002`,
+    knockedTitle: "3 \u6B21\u78B0\u649E\u540E\u8D2D\u7269\u8F66\u7FFB\u8F66\u4E86",
+    cartFell: "\u8D2D\u7269\u8F66\u7FFB\u5012\u4E86",
+    tooMany: (name) => `${name} \u6536\u96C6\u8FC7\u591A`,
+    tooManyBody: (name, target, current) => `${name} \u7684\u76EE\u6807\u662F ${target}\u4E2A\uFF0C\u4F46\u4F60\u5DF2\u7ECF\u6536\u96C6\u4E86 ${current}\u4E2A\u3002`,
+    goalTarget: (count) => `\u76EE\u6807 ${count}`,
+    points: (value) => `${value}\u5206`,
+    rank: (value) => `\u7B2C ${value} \u540D`,
+    emptyCartTitle: "\u7A7A\u8D2D\u7269\u8F66",
+    emptyCartBody: "\u8FD8\u6CA1\u6709\u6536\u96C6\u5230\u5546\u54C1"
   }
 };
 
-const i18n = translations[isKoreanLocale ? "ko" : "en"];
+const i18n = translations[localeKey] || translations.en;
 
 function localizedProductName(product) {
-  return productLocale[product.id]?.[isKoreanLocale ? "ko" : "en"] || product.name;
+  return productLocale[product.id]?.[localeKey] || productLocale[product.id]?.en || product.name;
 }
 
 function t(key, ...args) {
@@ -192,7 +336,7 @@ function t(key, ...args) {
 }
 
 function applyStaticTranslations() {
-  document.documentElement.lang = isKoreanLocale ? "ko" : "en";
+  document.documentElement.lang = localeKey;
   document.title = t("title");
   const topEyebrow = document.querySelector(".hud-top-copy .eyebrow");
   const topTitle = document.querySelector(".hud-top-copy h1");
@@ -1198,9 +1342,7 @@ function renderCartInventory() {
 
   const filled = state.shoppingGoals.filter((goal) => goal.collected > 0);
   if (filled.length === 0) {
-    ui.cartInventory.innerHTML = isKoreanLocale
-      ? '<span class="shopping-chip"><span class="shopping-icon">🛒</span><span class="shopping-meta"><span>빈 카트</span><span class="shopping-count">아직 담은 상품이 없어요</span></span></span>'
-      : '<span class="shopping-chip"><span class="shopping-icon">🛒</span><span class="shopping-meta"><span>Empty Cart</span><span class="shopping-count">No items collected yet</span></span></span>';
+    ui.cartInventory.innerHTML = `<span class="shopping-chip"><span class="shopping-icon">??</span><span class="shopping-meta"><span>${t("emptyCartTitle")}</span><span class="shopping-count">${t("emptyCartBody")}</span></span></span>`;
     return;
   }
 
@@ -1370,7 +1512,7 @@ function syncHud() {
   } else if (state.introCountdown > 0) {
     ui.statusText.textContent = t("statusCountdown", Math.max(1, Math.ceil(state.introCountdown)));
   } else if (state.invulnerableTimer > 0) {
-    ui.statusText.textContent = isKoreanLocale ? `부딪힘 ${state.hits}/3, 계속 진행 중` : `Crash ${state.hits}/3, keep going`;
+    ui.statusText.textContent = t("statusHit", state.hits);
   } else if (state.running) {
     ui.statusText.textContent = t("statusRunning");
   } else {
@@ -1418,6 +1560,29 @@ function openNameEditor() {
   ui.playerNameInput.focus();
   ui.playerNameInput.select();
   ui.nameHelp.textContent = rankingState.player.name
+    ? t("rankingExistingName")
+    : t("rankingEnterName");
+}
+
+function renderNamePrompt(payload) {
+  if (!ui.overlayRanking) {
+    return;
+  }
+
+  rankingState.player = payload.player || null;
+  rankingState.top10 = payload.top10 || [];
+  rankingState.isPersonalBest = Boolean(payload.isPersonalBest);
+
+  ui.overlayRanking.classList.remove("hidden");
+  ui.rankingStatus.textContent = t("rankingPersonalBest");
+  ui.rankingList.innerHTML = "";
+  ui.rankingMine.classList.add("hidden");
+  ui.rankingMine.innerHTML = "";
+  ui.nameForm.classList.remove("hidden");
+  ui.playerNameInput.value = payload.player?.name || "";
+  ui.playerNameInput.focus();
+  ui.playerNameInput.select();
+  ui.nameHelp.textContent = payload.player?.name
     ? t("rankingExistingName")
     : t("rankingEnterName");
 }
@@ -1490,6 +1655,10 @@ async function loadRankingForRun(outcome) {
       throw new Error(`score request failed: ${response.status}`);
     }
     const payload = await response.json();
+    if (outcome === "game_over" && payload.isPersonalBest) {
+      renderNamePrompt(payload);
+      return;
+    }
     renderRankingPanel(payload);
   } catch (error) {
     ui.overlayRanking.classList.remove("hidden");
@@ -1703,7 +1872,8 @@ function finishLevel() {
     t("clearBody", checkoutPoints, starBonus, levelBonus),
     t("nextLevel"),
     { missionMarkup: renderMissionListMarkup(state.shoppingGoals, true), showSecondary: true }
-  );
+  );
+
 }
 
 function burstParticles(position, color, count = 14) {

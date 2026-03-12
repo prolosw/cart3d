@@ -67,6 +67,15 @@ def get_client_ip(handler: SimpleHTTPRequestHandler) -> str:
     return handler.client_address[0]
 
 
+def get_client_identity(handler: SimpleHTTPRequestHandler) -> str:
+    ip = get_client_ip(handler)
+    user_agent = handler.headers.get("User-Agent", "").strip()
+    model = handler.headers.get("Sec-CH-UA-Model", "").strip()
+    platform = handler.headers.get("Sec-CH-UA-Platform", "").strip()
+    parts = [part for part in (ip, platform, model, user_agent) if part]
+    return " | ".join(parts) if parts else ip
+
+
 def ensure_player(conn: sqlite3.Connection, ip: str) -> sqlite3.Row:
     now = utc_now()
     conn.execute(
@@ -212,7 +221,7 @@ class GameRequestHandler(SimpleHTTPRequestHandler):
         parsed = urlparse(self.path)
         if parsed.path == "/api/rankings":
             with get_connection() as conn:
-                player = ensure_player(conn, get_client_ip(self))
+                player = ensure_player(conn, get_client_identity(self))
                 self._send_json(build_ranking_payload(conn, player["id"]))
             return
         super().do_GET()
@@ -226,7 +235,7 @@ class GameRequestHandler(SimpleHTTPRequestHandler):
             hits = max(0, int(payload.get("hits", 0)))
             outcome = str(payload.get("outcome", "game_over"))[:24]
             with get_connection() as conn:
-                player = ensure_player(conn, get_client_ip(self))
+                player = ensure_player(conn, get_client_identity(self))
                 is_best = save_score(conn, player["id"], score, level, hits, outcome)
                 self._send_json(build_ranking_payload(conn, player["id"], is_personal_best=is_best))
             return
@@ -235,7 +244,7 @@ class GameRequestHandler(SimpleHTTPRequestHandler):
             payload = self._read_json()
             name = str(payload.get("name", "")).strip()[:12]
             with get_connection() as conn:
-                player = ensure_player(conn, get_client_ip(self))
+                player = ensure_player(conn, get_client_identity(self))
                 conn.execute("UPDATE players SET name = ?, updated_at = ? WHERE id = ?", (name, utc_now(), player["id"]))
                 conn.commit()
                 self._send_json(build_ranking_payload(conn, player["id"], is_personal_best=bool(name)))
